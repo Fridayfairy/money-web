@@ -25,7 +25,7 @@ export default function Home() {
           </div>
           <div className="flex justify-between gap-4 border-t border-black/6 pt-3 dark:border-white/10">
             <dt className="text-zinc-500">状态</dt>
-            <dd>页面渲染正常</dd>
+            <dd>GitHub 已连接，等待公开访问</dd>
           </div>
         </dl>
       </main>
