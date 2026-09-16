@@ -13,7 +13,7 @@ export default function NotesIndexPage() {
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <PageHeader
         title="笔记"
-        description="金融学习、框架和复盘。Markdown 写在 content/notes，构建后即可阅读。"
+        description="方法、框架和复盘。"
       />
       <ArticleList>
         {pages.map((page) => (

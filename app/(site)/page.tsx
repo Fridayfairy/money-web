@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { ArticleRow } from "@/components/content-list";
-import { getReports, syncReportsToPublic } from "@/lib/reports";
+import { getReports } from "@/lib/reports";
 import { blog, notes, sortArticles } from "@/lib/source";
 
 export default function HomePage() {
-  syncReportsToPublic();
   const reports = getReports().slice(0, 3);
   const writings = sortArticles([...notes.getPages(), ...blog.getPages()]).slice(
     0,
@@ -18,8 +17,7 @@ export default function HomePage() {
         个人投研笔记
       </h1>
       <p className="mt-4 max-w-2xl leading-7 text-fd-muted-foreground">
-        存放自己的金融学习笔记、随笔，以及用 analyze-stock
-        生成的个股研报。这里是学习存档，不是荐股。
+        自己用的投研笔记、随笔，和做过的个股研报存档。
       </p>
 
       <section className="mt-14">
@@ -33,7 +31,7 @@ export default function HomePage() {
           </Link>
         </div>
         {reports.length === 0 ? (
-          <p className="py-6 text-fd-muted-foreground">还没有研报。把报告文件夹丢进 content/inbox 后执行 npm run import:report。</p>
+          <p className="py-6 text-fd-muted-foreground">还没有研报。</p>
         ) : (
           <ul className="divide-y divide-fd-border">
             {reports.map((report) => (

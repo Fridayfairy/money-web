@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getReport, getReports, syncReportsToPublic } from "@/lib/reports";
+import { getReport, getReports } from "@/lib/reports";
 
 export function generateStaticParams() {
-  syncReportsToPublic();
   return getReports().map((report) => ({
     ticker: report.ticker,
     date: report.date,
@@ -25,7 +24,6 @@ export async function generateMetadata({
 export default async function ReportReaderPage({
   params,
 }: PageProps<"/reports/[ticker]/[date]">) {
-  syncReportsToPublic();
   const { ticker, date } = await params;
   const report = getReport(ticker, date);
   if (!report) notFound();

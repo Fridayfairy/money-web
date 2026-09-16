@@ -13,7 +13,7 @@ export default function BlogIndexPage() {
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <PageHeader
         title="随笔"
-        description="和研报分开的个人文字。文件放在 content/blog。"
+        description="和研报分开的观察与想法。"
       />
       <ArticleList>
         {pages.map((page) => (

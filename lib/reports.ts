@@ -12,7 +12,6 @@ export type ReportMeta = {
 };
 
 const CONTENT_REPORTS = path.join(process.cwd(), "content/reports");
-const PUBLIC_REPORTS = path.join(process.cwd(), "public/raw-reports");
 const HTML_FILE = "full-report-standalone.html";
 
 function isReportDir(dir: string) {
@@ -53,13 +52,6 @@ function readMetaFile(dir: string, ticker: string, date: string): ReportMeta {
     url,
     htmlPath,
   };
-}
-
-export function syncReportsToPublic() {
-  if (!fs.existsSync(CONTENT_REPORTS)) return;
-  fs.mkdirSync(path.dirname(PUBLIC_REPORTS), { recursive: true });
-  fs.rmSync(PUBLIC_REPORTS, { recursive: true, force: true });
-  fs.cpSync(CONTENT_REPORTS, PUBLIC_REPORTS, { recursive: true });
 }
 
 export function getReports(): ReportMeta[] {

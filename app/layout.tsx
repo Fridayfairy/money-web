@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     default: "MoneyWeb",
     template: "%s · MoneyWeb",
   },
-  description: "个人投研笔记与 AI 研报存档",
+  description: "个人投研笔记与个股研报存档",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
