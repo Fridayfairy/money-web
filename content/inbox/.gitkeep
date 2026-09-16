@@ -1,0 +1,2 @@
+# 把 analyze-stock 生成的 TICKER_YYYYMMDD 文件夹丢到这里，然后运行：
+# npm run import:report

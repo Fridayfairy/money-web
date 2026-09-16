@@ -1,5 +1,6 @@
+import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,19 +13,38 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const notoSans = Noto_Sans_SC({
+  variable: "--font-noto",
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "MoneyWeb",
-  description: "个人博客调试站点",
+  title: {
+    default: "MoneyWeb",
+    template: "%s · MoneyWeb",
+  },
+  description: "个人投研笔记与 AI 研报存档",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="zh-CN"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 font-sans text-foreground dark:bg-black">
-        {children}
+      <body className="flex min-h-full flex-col">
+        <RootProvider
+          search={{ enabled: false }}
+          theme={{
+            defaultTheme: "light",
+            enableSystem: true,
+          }}
+        >
+          {children}
+        </RootProvider>
       </body>
     </html>
   );

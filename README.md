@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MoneyWeb
 
-## Getting Started
+个人投研笔记站：研报归档、金融学习笔记、随笔。GitHub 推送到 `main` 后由 Vercel 构建。
 
-First, run the development server:
+## 本地
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 更新内容
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 笔记：在 `content/notes` 新增 `.mdx`（可放相对路径图片）
+- 随笔：在 `content/blog` 新增 `.mdx`
+- 研报：把 analyze-stock 生成的 `TICKER_YYYYMMDD` 文件夹丢进 `content/inbox`，或直接执行：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run import:report -- 600547.SH
+npm run import:report -- /path/to/600547.SH_20260907
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+然后 `git push`。构建时会把 `content/reports` 同步到静态目录，研报页用原 HTML 展示。
