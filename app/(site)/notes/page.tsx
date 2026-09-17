@@ -12,6 +12,7 @@ export default function NotesIndexPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <PageHeader
+        eyebrow="Notes"
         title="笔记"
         description="方法、框架和复盘。"
       />

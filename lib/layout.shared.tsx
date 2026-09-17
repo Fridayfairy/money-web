@@ -4,14 +4,14 @@ export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
       title: (
-        <span className="font-medium tracking-tight">
+        <span className="text-base font-semibold tracking-tight text-[var(--mw-text)]">
           MoneyWeb
-          <span className="ml-2 text-sm font-normal text-fd-muted-foreground">
+          <span className="ml-2 text-sm font-normal text-[var(--mw-text-secondary)]">
             投研笔记
           </span>
         </span>
       ),
-      transparentMode: "none",
+      transparentMode: "top",
     },
     githubUrl: "https://github.com/Fridayfairy/money-web",
     searchToggle: {

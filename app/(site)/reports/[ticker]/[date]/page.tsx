@@ -29,25 +29,42 @@ export default async function ReportReaderPage({
   if (!report) notFound();
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col">
-      <div className="border-b border-fd-border px-6 py-3 text-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+    <div className="flex min-h-[calc(100dvh-4rem)] flex-col">
+      {/* Sticky toolbar */}
+      <div className="mw-glass sticky top-0 z-30 border-b border-[var(--mw-border)] px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center gap-4">
           <Link
             href="/reports"
-            className="text-fd-muted-foreground hover:underline hover:underline-offset-4"
+            className="mw-link shrink-0 text-sm font-medium text-[var(--mw-text-secondary)]"
           >
-            返回研报目录
+            ← 返回
           </Link>
-          <p className="truncate text-fd-muted-foreground">
-            {report.name} {report.ticker} · {report.date}
-          </p>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-[var(--mw-text)]">
+              {report.name}{" "}
+              <span className="font-normal text-[var(--mw-text-secondary)]">
+                {report.ticker}
+              </span>
+            </p>
+            <p className="truncate text-xs text-[var(--mw-text-secondary)]">
+              {report.date}
+              {report.score != null ? ` · ${report.score} 分` : ""}
+              {report.oneLiner ? ` · ${report.oneLiner}` : ""}
+            </p>
+          </div>
         </div>
       </div>
-      <iframe
-        title={`${report.name} 研报`}
-        src={report.htmlPath}
-        className="w-full flex-1 border-0 bg-white"
-      />
+
+      {/* iframe canvas frame */}
+      <div className="flex-1 px-0 py-0 sm:px-4 sm:py-6 md:px-8">
+        <div className="mx-auto h-full max-w-6xl overflow-hidden rounded-none border-0 sm:rounded-2xl sm:border sm:border-[var(--mw-border)]">
+          <iframe
+            title={`${report.name} 研报`}
+            src={report.htmlPath}
+            className="block min-h-[calc(100dvh-8rem)] w-full border-0 bg-white"
+          />
+        </div>
+      </div>
     </div>
   );
 }

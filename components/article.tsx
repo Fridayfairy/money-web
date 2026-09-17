@@ -19,21 +19,40 @@ export function Article({
   children: ReactNode;
 }) {
   return (
-    <article className="mx-auto w-full max-w-2xl px-6 py-12">
-      <p className="text-sm text-fd-muted-foreground">{formatDay(date)}</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
-      {description ? (
-        <p className="mt-3 leading-7 text-fd-muted-foreground">{description}</p>
-      ) : null}
-      {tags?.length ? (
-        <p className="mt-3 text-sm text-fd-muted-foreground">{tags.join(" · ")}</p>
-      ) : null}
+    <article className="mx-auto w-full max-w-[720px] px-6 py-16 sm:py-20">
+      {/* Reading cover */}
+      <header className="mb-12">
+        {date ? (
+          <p className="text-sm font-medium tracking-wide text-[var(--mw-text-secondary)]">
+            {formatDay(date)}
+          </p>
+        ) : null}
+        <h1 className="mt-3 mw-heading-lg">{title}</h1>
+        {description ? (
+          <p className="mt-4 text-lg leading-relaxed text-[var(--mw-text-secondary)]">
+            {description}
+          </p>
+        ) : null}
+        {tags?.length ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span key={tag} className="mw-capsule">
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </header>
+
+      {/* Inline TOC */}
       {toc && toc.length > 0 ? (
-        <div className="mt-8">
+        <div className="mb-10">
           <InlineTOC items={toc} />
         </div>
       ) : null}
-      <div className="prose mt-10 max-w-none">{children}</div>
+
+      {/* Prose body */}
+      <div className="mw-prose">{children}</div>
     </article>
   );
 }

@@ -2,21 +2,347 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
+/* ============================================================
+   MoneyWeb — Apple-inspired semantic design tokens
+   ============================================================ */
+
 :root {
-  --color-fd-background: #f7f5f2;
-  --color-fd-foreground: #1c1917;
+  /* --- fumadocs base overrides --- */
+  --color-fd-background: #f5f5f7;
+  --color-fd-foreground: #1d1d1f;
+  --color-fd-muted-foreground: #6e6e73;
+  --color-fd-border: rgba(0, 0, 0, 0.08);
+  --color-fd-accent: #0071e3;
+
+  /* --- semantic page tokens (light) --- */
+  --mw-page: #f5f5f7;
+  --mw-surface: #ffffff;
+  --mw-text: #1d1d1f;
+  --mw-text-secondary: #6e6e73;
+  --mw-border: rgba(0, 0, 0, 0.08);
+  --mw-accent: #0071e3;
+  --mw-accent-hover: #0077ed;
+  --mw-focus-ring: rgba(0, 113, 227, 0.45);
+  --mw-selection: rgba(0, 113, 227, 0.18);
+  --mw-glass-bg: rgba(255, 255, 255, 0.72);
+  --mw-glass-border: rgba(0, 0, 0, 0.06);
+  --mw-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --mw-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --mw-hero-glow: radial-gradient(
+    ellipse 60% 50% at 50% 0%,
+    rgba(0, 113, 227, 0.06) 0%,
+    transparent 70%
+  );
 }
 
 .dark {
-  --color-fd-background: #121110;
-  --color-fd-foreground: #f5f2ec;
+  --color-fd-background: #000000;
+  --color-fd-foreground: #f5f5f7;
+  --color-fd-muted-foreground: #a1a1a6;
+  --color-fd-border: rgba(255, 255, 255, 0.10);
+  --color-fd-accent: #2997ff;
+
+  --mw-page: #000000;
+  --mw-surface: #1c1c1e;
+  --mw-text: #f5f5f7;
+  --mw-text-secondary: #a1a1a6;
+  --mw-border: rgba(255, 255, 255, 0.10);
+  --mw-accent: #2997ff;
+  --mw-accent-hover: #40a0ff;
+  --mw-focus-ring: rgba(41, 151, 255, 0.5);
+  --mw-selection: rgba(41, 151, 255, 0.22);
+  --mw-glass-bg: rgba(28, 28, 30, 0.72);
+  --mw-glass-border: rgba(255, 255, 255, 0.08);
+  --mw-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --mw-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --mw-hero-glow: radial-gradient(
+    ellipse 60% 50% at 50% 0%,
+    rgba(41, 151, 255, 0.08) 0%,
+    transparent 70%
+  );
 }
+
+/* ============================================================
+   Base resets & global typography
+   ============================================================ */
 
 html {
   scrollbar-gutter: stable;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--font-geist-sans), var(--font-noto), ui-sans-serif, system-ui,
     sans-serif;
+  background-color: var(--mw-page);
+  color: var(--mw-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.6;
+}
+
+/* Selection */
+::selection {
+  background: var(--mw-selection);
+}
+
+/* ============================================================
+   Focus ring — keyboard accessible
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--mw-focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   Reusable surface classes
+   ============================================================ */
+
+/* Page background wrapper */
+.mw-page-bg {
+  background-color: var(--mw-page);
+  min-height: 100dvh;
+}
+
+/* Content surface card */
+.mw-surface {
+  background-color: var(--mw-surface);
+  border: 1px solid var(--mw-border);
+  border-radius: 16px;
+  box-shadow: var(--mw-card-shadow);
+}
+
+/* Flat surface — no shadow, just border */
+.mw-surface-flat {
+  background-color: var(--mw-surface);
+  border: 1px solid var(--mw-border);
+  border-radius: 12px;
+}
+
+/* ============================================================
+   Glass (navbar / toolbar)
+   ============================================================ */
+
+.mw-glass {
+  background-color: var(--mw-glass-bg);
+  border-color: var(--mw-glass-border);
+  border-bottom: 1px solid var(--mw-glass-border);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .mw-glass {
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+}
+
+/* ============================================================
+   Interactive card transitions (scoped, NOT global wildcard)
+   ============================================================ */
+
+.mw-card-interactive {
+  transition:
+    transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.mw-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mw-card-shadow-hover);
+  border-color: var(--mw-accent);
+}
+
+.mw-card-interactive:active {
+  transform: translateY(0);
+}
+
+/* Link hover — color shift, no underline-only feedback */
+.mw-link {
+  color: var(--mw-text);
+  transition: color 160ms ease;
+}
+
+.mw-link:hover,
+.mw-link:focus-visible {
+  color: var(--mw-accent);
+}
+
+/* ============================================================
+   Capsule / chip
+   ============================================================ */
+
+.mw-capsule {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  border: 1px solid var(--mw-border);
+  color: var(--mw-text-secondary);
+  background-color: var(--mw-surface);
+  min-height: 44px;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.mw-capsule:hover,
+.mw-capsule:focus-visible {
+  color: var(--mw-accent);
+  border-color: var(--mw-accent);
+}
+
+.mw-capsule[data-active="true"] {
+  background-color: var(--mw-text);
+  color: var(--mw-page);
+  border-color: var(--mw-text);
+}
+
+/* ============================================================
+   Heading & eyebrow typography
+   ============================================================ */
+
+.mw-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mw-accent);
+}
+
+.mw-heading-xl {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--mw-text);
+}
+
+.mw-heading-lg {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--mw-text);
+}
+
+.mw-heading-md {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--mw-text);
+}
+
+/* ============================================================
+   Prose / reading body
+   ============================================================ */
+
+.mw-prose {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--mw-text);
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.mw-prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.mw-prose h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-top: 2.25em;
+  margin-bottom: 0.75em;
+}
+
+.mw-prose h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 1.75em;
+  margin-bottom: 0.5em;
+}
+
+.mw-prose a {
+  color: var(--mw-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.mw-prose a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.mw-prose blockquote {
+  border-left: 3px solid var(--mw-accent);
+  padding-left: 1.25em;
+  margin: 1.5em 0;
+  color: var(--mw-text-secondary);
+  font-style: italic;
+}
+
+.mw-prose code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+  background-color: var(--mw-border);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+
+.mw-prose pre {
+  border-radius: 12px;
+  border: 1px solid var(--mw-border);
+  overflow-x: auto;
+}
+
+.mw-prose pre code {
+  background: none;
+  padding: 0;
+}
+
+.mw-prose ul,
+.mw-prose ol {
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.mw-prose li {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+}
+
+.mw-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--mw-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .mw-card-interactive,
+  .mw-link,
+  .mw-capsule {
+    transition: none !important;
+  }
+
+  .mw-card-interactive:hover {
+    transform: none;
+  }
 }

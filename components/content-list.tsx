@@ -11,13 +11,11 @@ export function PageHeader({
   description?: string;
 }) {
   return (
-    <header className="mb-10">
-      {eyebrow ? (
-        <p className="text-sm tracking-wide text-fd-muted-foreground">{eyebrow}</p>
-      ) : null}
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
+    <header className="mb-12">
+      {eyebrow ? <p className="mw-eyebrow mb-3">{eyebrow}</p> : null}
+      <h1 className="mw-heading-lg">{title}</h1>
       {description ? (
-        <p className="mt-3 max-w-2xl leading-7 text-fd-muted-foreground">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--mw-text-secondary)]">
           {description}
         </p>
       ) : null}
@@ -26,7 +24,7 @@ export function PageHeader({
 }
 
 export function ArticleList({ children }: { children: ReactNode }) {
-  return <ul className="divide-y divide-fd-border">{children}</ul>;
+  return <ul className="flex flex-col gap-3">{children}</ul>;
 }
 
 export function ArticleRow({
@@ -42,15 +40,20 @@ export function ArticleRow({
 }) {
   return (
     <li>
-      <Link href={href} className="group block py-5">
+      <Link
+        href={href}
+        className="mw-surface-flat mw-card-interactive group block rounded-xl px-5 py-4 sm:px-6 sm:py-5"
+      >
         {meta ? (
-          <p className="text-sm text-fd-muted-foreground">{meta}</p>
+          <p className="text-xs font-medium tracking-wide text-[var(--mw-text-secondary)]">
+            {meta}
+          </p>
         ) : null}
-        <h2 className="mt-1 text-lg font-medium tracking-tight group-hover:underline group-hover:underline-offset-4">
+        <h2 className="mt-1.5 text-base font-semibold tracking-tight text-[var(--mw-text)] group-hover:text-[var(--mw-accent)] sm:text-lg">
           {title}
         </h2>
         {description ? (
-          <p className="mt-2 line-clamp-2 leading-7 text-fd-muted-foreground">
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--mw-text-secondary)]">
             {description}
           </p>
         ) : null}

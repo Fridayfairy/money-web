@@ -11,58 +11,94 @@ export default function HomePage() {
   );
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <p className="text-sm tracking-wide text-fd-muted-foreground">MoneyWeb</p>
-      <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-        个人投研笔记
-      </h1>
-      <p className="mt-4 max-w-2xl leading-7 text-fd-muted-foreground">
-        自己用的投研笔记、随笔，和做过的个股研报存档。
-      </p>
+    <main className="mx-auto w-full max-w-4xl px-6">
+      {/* Hero */}
+      <section className="relative pb-16 pt-20 sm:pb-24 sm:pt-28">
+        {/* Subtle background glow */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[400px]"
+          style={{ background: "var(--mw-hero-glow)" }}
+          aria-hidden="true"
+        />
+        <p className="mw-eyebrow mb-4">MoneyWeb</p>
+        <h1 className="mw-heading-xl max-w-2xl">个人投研笔记</h1>
+        <p className="mt-5 max-w-xl text-lg leading-relaxed text-[var(--mw-text-secondary)]">
+          自己用的投研笔记、随笔，和做过的个股研报存档。
+        </p>
+      </section>
 
-      <section className="mt-14">
-        <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="text-lg font-medium">最近研报</h2>
+      {/* Reports — primary section */}
+      <section className="pb-16">
+        <div className="mb-6 flex items-baseline justify-between">
+          <h2 className="mw-heading-md">最近研报</h2>
           <Link
             href="/reports"
-            className="text-sm text-fd-muted-foreground hover:underline hover:underline-offset-4"
+            className="mw-link text-sm font-medium text-[var(--mw-text-secondary)]"
           >
-            全部
+            查看全部
           </Link>
         </div>
         {reports.length === 0 ? (
-          <p className="py-6 text-fd-muted-foreground">还没有研报。</p>
+          <p className="py-8 text-[var(--mw-text-secondary)]">还没有研报。</p>
         ) : (
-          <ul className="divide-y divide-fd-border">
+          <ul className="flex flex-col gap-3">
             {reports.map((report) => (
-              <ArticleRow
-                key={report.url}
-                href={report.url}
-                title={`${report.name} ${report.ticker}`}
-                description={report.oneLiner}
-                meta={report.date}
-              />
+              <li key={report.url}>
+                <Link
+                  href={report.url}
+                  className="mw-surface mw-card-interactive group block rounded-2xl px-6 py-5"
+                >
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="text-base font-semibold tracking-tight text-[var(--mw-text)] group-hover:text-[var(--mw-accent)] sm:text-lg">
+                      {report.name}
+                    </span>
+                    <span className="text-sm font-medium text-[var(--mw-text-secondary)]">
+                      {report.ticker}
+                    </span>
+                    {report.score != null ? (
+                      <span className="mw-capsule text-xs">
+                        {report.score} 分
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="mt-0.5 text-xs font-medium tracking-wide text-[var(--mw-text-secondary)]">
+                    {report.date}
+                  </p>
+                  {report.oneLiner ? (
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--mw-text-secondary)]">
+                      {report.oneLiner}
+                    </p>
+                  ) : null}
+                </Link>
+              </li>
             ))}
           </ul>
         )}
       </section>
 
-      <section className="mt-12">
-        <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="text-lg font-medium">最近笔记与随笔</h2>
-          <div className="flex gap-4 text-sm text-fd-muted-foreground">
-            <Link href="/notes" className="hover:underline hover:underline-offset-4">
+      {/* Writings — secondary section */}
+      <section className="pb-20">
+        <div className="mb-6 flex items-baseline justify-between">
+          <h2 className="mw-heading-md">最近笔记与随笔</h2>
+          <div className="flex gap-4">
+            <Link
+              href="/notes"
+              className="mw-link text-sm font-medium text-[var(--mw-text-secondary)]"
+            >
               笔记
             </Link>
-            <Link href="/blog" className="hover:underline hover:underline-offset-4">
+            <Link
+              href="/blog"
+              className="mw-link text-sm font-medium text-[var(--mw-text-secondary)]"
+            >
               随笔
             </Link>
           </div>
         </div>
         {writings.length === 0 ? (
-          <p className="py-6 text-fd-muted-foreground">还没有文章。</p>
+          <p className="py-8 text-[var(--mw-text-secondary)]">还没有文章。</p>
         ) : (
-          <ul className="divide-y divide-fd-border">
+          <ul className="flex flex-col gap-3">
             {writings.map((page) => (
               <ArticleRow
                 key={page.url}

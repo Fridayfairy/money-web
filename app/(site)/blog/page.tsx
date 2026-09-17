@@ -12,6 +12,7 @@ export default function BlogIndexPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <PageHeader
+        eyebrow="Essays"
         title="随笔"
         description="和研报分开的观察与想法。"
       />
