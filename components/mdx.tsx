@@ -15,32 +15,46 @@ function resolveStaticSrc(rawSrc: unknown): string | undefined {
 }
 
 function MdxImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  const { className: incoming, alt, src: rawSrc, ...rest } = props;
-  const base = "my-6 h-auto max-w-full rounded-xl border border-[var(--mw-border)] shadow-sm";
-  return (
+  const {
+    className: incoming,
+    alt,
+    src: rawSrc,
+    title,
+    // Sensible defaults that callers may override explicitly.
+    loading = "lazy",
+    decoding = "async",
+    ...rest
+  } = props;
+
+  const img = (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       {...rest}
       src={resolveStaticSrc(rawSrc)}
       alt={alt ?? ""}
-      className={[base, incoming].filter(Boolean).join(" ")}
+      loading={loading}
+      decoding={decoding}
+      className={incoming}
     />
   );
+
+  // `title` becomes the visible caption; `alt` stays on the image as the
+  // alternative text and is never duplicated as a caption.
+  if (title) {
+    return <figure>{img}<figcaption>{title}</figcaption></figure>;
+  }
+
+  return img;
 }
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
     img: MdxImg,
+    // Semantic pass-through only: visual styles live in `.mw-prose blockquote`.
     blockquote: (props) => {
       const { className: incoming, ...rest } = props;
-      const base = "my-6 border-l-[3px] border-[var(--mw-accent)] pl-5 text-[var(--mw-text-secondary)] italic";
-      return (
-        <blockquote
-          {...rest}
-          className={[base, incoming].filter(Boolean).join(" ")}
-        />
-      );
+      return <blockquote {...rest} className={incoming} />;
     },
     code: (props) => {
       // If it's a block-level code (has className with language), let fumadocs handle it

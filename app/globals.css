@@ -33,6 +33,14 @@
     rgba(0, 113, 227, 0.06) 0%,
     transparent 70%
   );
+
+  /* --- reading elements (light) --- */
+  --mw-image-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --mw-blockquote-bg: rgba(0, 113, 227, 0.04);
+  --mw-blockquote-nested-bg: rgba(0, 113, 227, 0.02);
+  --mw-table-head-bg: rgba(0, 0, 0, 0.03);
+  --mw-table-stripe: rgba(0, 0, 0, 0.018);
+  --mw-table-head-line: rgba(0, 0, 0, 0.14);
 }
 
 .dark {
@@ -60,6 +68,14 @@
     rgba(41, 151, 255, 0.08) 0%,
     transparent 70%
   );
+
+  /* --- reading elements (dark) --- */
+  --mw-image-shadow: 0 2px 12px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --mw-blockquote-bg: rgba(41, 151, 255, 0.07);
+  --mw-blockquote-nested-bg: rgba(41, 151, 255, 0.04);
+  --mw-table-head-bg: rgba(255, 255, 255, 0.05);
+  --mw-table-stripe: rgba(255, 255, 255, 0.03);
+  --mw-table-head-line: rgba(255, 255, 255, 0.18);
 }
 
 /* ============================================================
@@ -285,12 +301,48 @@ body {
   text-decoration-thickness: 2px;
 }
 
+/* Heading anchor focus ring (fumadocs Heading renders <a href="#id">) */
+.mw-prose :is(h2, h3, h4, h5) a:focus-visible {
+  outline: 2px solid var(--mw-focus-ring);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+/* Horizontal rule — generous breathing room, hairline divider */
+.mw-prose hr {
+  margin: 2.5em 0;
+  border: none;
+  border-top: 1px solid var(--mw-border);
+}
+
+/* Blockquote — restrained emphasis: accent bar, light surface, upright text */
 .mw-prose blockquote {
-  border-left: 3px solid var(--mw-accent);
-  padding-left: 1.25em;
   margin: 1.5em 0;
-  color: var(--mw-text-secondary);
-  font-style: italic;
+  padding: 0.85em 1.25em;
+  border-left: 3px solid var(--mw-accent);
+  border-radius: 0 10px 10px 0;
+  background-color: var(--mw-blockquote-bg);
+  color: var(--mw-text);
+}
+
+.mw-prose blockquote > *:first-child {
+  margin-top: 0;
+}
+
+.mw-prose blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested quotes: up to three levels of decreasing emphasis,
+   deeper levels keep the third-level look (selectors match all >= N) */
+.mw-prose blockquote blockquote {
+  border-left-color: color-mix(in srgb, var(--mw-accent) 65%, transparent);
+  background-color: var(--mw-blockquote-nested-bg);
+}
+
+.mw-prose blockquote blockquote blockquote {
+  border-left-color: color-mix(in srgb, var(--mw-accent) 40%, transparent);
+  background-color: transparent;
 }
 
 .mw-prose code {
@@ -312,10 +364,32 @@ body {
   padding: 0;
 }
 
+/* Lists — restore markers (tailwind preflight removes them) with a
+   clear nested numbering system; native ol/ul/li semantics preserved */
 .mw-prose ul,
 .mw-prose ol {
-  padding-left: 1.5em;
   margin: 1em 0;
+  padding-left: 1.6em;
+}
+
+.mw-prose ol {
+  list-style-type: decimal;
+}
+
+.mw-prose ol ol {
+  list-style-type: lower-alpha;
+}
+
+.mw-prose ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.mw-prose ul {
+  list-style-type: disc;
+}
+
+.mw-prose ul ul {
+  list-style-type: circle;
 }
 
 .mw-prose li {
@@ -323,12 +397,100 @@ body {
   margin-bottom: 0.35em;
 }
 
+.mw-prose li::marker {
+  color: var(--mw-accent);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.mw-prose li > ul,
+.mw-prose li > ol {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+}
+
+/* Figures — `title` renders as figcaption; centered with moderate whitespace */
+.mw-prose figure {
+  margin: 2em auto;
+  text-align: center;
+}
+
+.mw-prose figure > img {
+  margin: 0;
+}
+
+.mw-prose figcaption {
+  margin-top: 0.75em;
+  font-size: 0.875em;
+  line-height: 1.65;
+  color: var(--mw-text-secondary);
+}
+
 .mw-prose img {
+  display: block;
+  margin-inline: auto;
   max-width: 100%;
   height: auto;
   border-radius: 12px;
   border: 1px solid var(--mw-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background-color: var(--mw-surface);
+  box-shadow: var(--mw-image-shadow);
+}
+
+/* Tables — reuse fumadocs' default scroll wrapper (div.overflow-auto);
+   short tables fill the column, wide tables scroll inside the wrapper */
+.mw-prose div:has(> table) {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.mw-prose table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375em;
+  line-height: 1.65;
+}
+
+.mw-prose thead th {
+  background-color: var(--mw-table-head-bg);
+  font-weight: 600;
+  text-align: left;
+  vertical-align: bottom;
+  padding: 0.65em 1em;
+  border-bottom: 2px solid var(--mw-table-head-line);
+}
+
+.mw-prose tbody td {
+  padding: 0.6em 1em;
+  border-bottom: 1px solid var(--mw-border);
+  vertical-align: top;
+}
+
+/* First column keeps a stronger hierarchy (row-heading semantics) */
+.mw-prose tbody td:first-child {
+  font-weight: 500;
+}
+
+/* Very light striping to aid long-table scanning */
+.mw-prose tbody tr:nth-child(even) {
+  background-color: var(--mw-table-stripe);
+}
+
+/* Math — build-time KaTeX output; color follows body text in both themes.
+   Structural KaTeX layout is left untouched. */
+.mw-prose .katex {
+  color: inherit;
+  font-size: 1.05em;
+}
+
+.mw-prose .katex-display {
+  margin: 1.25em 0;
+  padding-block: 0.25em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 /* ============================================================
@@ -344,5 +506,98 @@ body {
 
   .mw-card-interactive:hover {
     transform: none;
+  }
+}
+
+/* ============================================================
+   Print — precise pagination & noise removal
+   (screen styles are untouched; everything below is print-only)
+   ============================================================ */
+
+@media print {
+  /* Re-assert the light palette regardless of the active theme */
+  :root,
+  .dark {
+    --mw-page: #ffffff;
+    --mw-surface: #ffffff;
+    --mw-text: #1d1d1f;
+    --mw-text-secondary: #55555d;
+    --mw-border: rgba(0, 0, 0, 0.14);
+    --mw-accent: #0060c2;
+    --mw-blockquote-bg: rgba(0, 0, 0, 0.03);
+    --mw-blockquote-nested-bg: rgba(0, 0, 0, 0.02);
+    --mw-table-head-bg: rgba(0, 0, 0, 0.04);
+    --mw-table-stripe: rgba(0, 0, 0, 0.02);
+    --mw-table-head-line: rgba(0, 0, 0, 0.2);
+    --mw-image-shadow: none;
+    --mw-card-shadow: none;
+    --mw-card-shadow-hover: none;
+    --mw-hero-glow: none;
+  }
+
+  /* Hide chrome: site nav, footer, article TOC (stable selectors only) */
+  #nd-home-layout > header,
+  footer,
+  .mw-article-toc {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  .mw-surface,
+  .mw-surface-flat {
+    box-shadow: none !important;
+  }
+
+  /* Keep links readable and print URLs for external references */
+  .mw-prose a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 0, 0, 0.35);
+  }
+
+  .mw-prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.875em;
+    color: var(--mw-text-secondary);
+    word-break: break-all;
+  }
+
+  /* Pagination: keep headings with their content, avoid splitting
+     figures/quotes/code/equations, repeat table headers across pages */
+  .mw-prose h2,
+  .mw-prose h3 {
+    break-after: avoid;
+  }
+
+  .mw-prose figure,
+  .mw-prose blockquote,
+  .mw-prose pre,
+  .mw-prose .katex-display {
+    break-inside: avoid;
+  }
+
+  .mw-prose thead {
+    display: table-header-group;
+  }
+
+  .mw-prose tr {
+    break-inside: avoid;
+  }
+
+  /* Paper has no scrollbars: let wrappers expand, shrink table text */
+  .mw-prose div:has(> table) {
+    overflow: visible;
+  }
+
+  .mw-prose table {
+    font-size: 0.8125em;
+  }
+
+  .mw-prose .katex-display {
+    overflow: visible;
   }
 }

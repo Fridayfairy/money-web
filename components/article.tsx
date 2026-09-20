@@ -44,9 +44,9 @@ export function Article({
         ) : null}
       </header>
 
-      {/* Inline TOC */}
+      {/* Inline TOC — stable class for print/styling control */}
       {toc && toc.length > 0 ? (
-        <div className="mb-10">
+        <div className="mw-article-toc mb-10">
           <InlineTOC items={toc} />
         </div>
       ) : null}

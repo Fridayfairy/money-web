@@ -31,7 +31,8 @@
               "title": "新标签页"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -110,7 +111,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "blog/whyisme.mdx",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -129,7 +129,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "blog/whyisme.mdx",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -172,7 +171,6 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "blog/whyisme.mdx",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -210,9 +208,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "739e27b35347c7b4",
+  "active": "4b300c08dc03bd74",
   "lastOpenFiles": [
     "blog/whyisme.mdx",
+    "notes/signal-grade-sizing.mdx",
+    "notes/gold-miners-stampede.mdx",
+    "notes/flat-before-position.mdx",
     "blog/think0918.mdx",
     "blog/think0917.mdx",
     "未命名.md",
