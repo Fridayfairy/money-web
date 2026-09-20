@@ -13,12 +13,22 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "blog/think0918.mdx",
+                "file": "blog/whyisme.mdx",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "think0918"
+              "title": "whyisme"
+            }
+          },
+          {
+            "id": "4b300c08dc03bd74",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
             }
           }
         ]
@@ -83,7 +93,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "c53a610199e85e7d",
@@ -99,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "blog/think0918.mdx",
+                "file": "blog/whyisme.mdx",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +129,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "blog/think0918.mdx",
+                "file": "blog/whyisme.mdx",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +172,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "blog/think0918.mdx",
+                "file": "blog/whyisme.mdx",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -201,8 +212,10 @@
   },
   "active": "739e27b35347c7b4",
   "lastOpenFiles": [
-    "blog/think0917.mdx",
+    "blog/whyisme.mdx",
     "blog/think0918.mdx",
+    "blog/think0917.mdx",
+    "未命名.md",
     "2026-09-17.md",
     "blog/未命名.md"
   ]
