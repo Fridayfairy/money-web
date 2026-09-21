@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { syncReports } from "./lib/reports-pipeline.mjs";
 
 const ROOT = process.cwd();
 const CONTENT_REPORTS = path.join(ROOT, "content/reports");
@@ -79,14 +80,6 @@ function processInbox() {
   return count;
 }
 
-function syncPublic() {
-  const src = CONTENT_REPORTS;
-  const dest = path.join(ROOT, "public/raw-reports");
-  if (!fs.existsSync(src)) return;
-  fs.rmSync(dest, { recursive: true, force: true });
-  fs.cpSync(src, dest, { recursive: true });
-}
-
 const arg = process.argv[2];
 try {
   if (!arg) {
@@ -108,7 +101,8 @@ try {
     }
     importDir(dir);
   }
-  syncPublic();
+  // 幂等增强 + 镜像，与 dev / prebuild 的 sync-reports.mjs 共享同一管道
+  syncReports({ root: ROOT });
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);

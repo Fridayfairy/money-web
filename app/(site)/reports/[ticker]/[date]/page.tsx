@@ -32,7 +32,7 @@ export default async function ReportReaderPage({
     <div className="flex min-h-[calc(100dvh-4rem)] flex-col">
       {/* Sticky toolbar */}
       <div className="mw-glass sticky top-0 z-30 border-b border-[var(--mw-border)] px-4 py-3 sm:px-6">
-        <div className="mx-auto flex max-w-6xl items-center gap-4">
+        <div className="mx-auto flex w-full max-w-[1600px] items-center gap-3 sm:gap-4">
           <Link
             href="/reports"
             className="mw-link shrink-0 text-sm font-medium text-[var(--mw-text-secondary)]"
@@ -52,12 +52,22 @@ export default async function ReportReaderPage({
               {report.oneLiner ? ` · ${report.oneLiner}` : ""}
             </p>
           </div>
+          <a
+            href={report.htmlPath}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mw-capsule shrink-0 gap-1.5 whitespace-nowrap px-4 py-2 text-[0.8125rem]"
+          >
+            全屏阅读
+            <span aria-hidden="true">↗</span>
+            <span className="sr-only">在新标签页打开完整研报</span>
+          </a>
         </div>
       </div>
 
-      {/* iframe canvas frame */}
-      <div className="flex-1 px-0 py-0 sm:px-4 sm:py-6 md:px-8">
-        <div className="mx-auto h-full max-w-6xl overflow-hidden rounded-none border-0 sm:rounded-2xl sm:border sm:border-[var(--mw-border)]">
+      {/* iframe canvas frame · 宽画布对齐 standalone 报告 1600px 设计宽度 */}
+      <div className="flex-1 px-0 py-0 sm:px-2 sm:py-4 md:px-4 md:py-6">
+        <div className="mx-auto h-full w-full max-w-[1600px] overflow-hidden rounded-none border-0 sm:rounded-2xl sm:border sm:border-[var(--mw-border)]">
           <iframe
             title={`${report.name} 研报`}
             src={report.htmlPath}
