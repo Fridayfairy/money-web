@@ -2,12 +2,14 @@
 """每日看盘日志：抓客观数据，写成一条 Notion 记录。
 
 情绪、唯一动作、逻辑变化不写，留给手机手填。
+AI 稿不进属性，写在页面正文的「AI稿」一节，重跑只追加、不覆盖。
 抓取失败写成「待填」，不让整次运行中断。
 
 用法（在仓库根目录，上海时间）：
   python scripts/watchlog.py preopen   # 09:00 盘前
   python scripts/watchlog.py midday    # 12:30 午盘
   python scripts/watchlog.py close     # 15:15 复盘
+  python scripts/watchlog.py close --draft notes/leyard.md
   python scripts/watchlog.py week      # 池子里超过 7 天没被复盘点名的票
 
 密钥放 scripts/watchlog.env，不要提交。
@@ -295,24 +297,91 @@ def objective_fields(command: str, today: date, watch: dict[str, str]) -> dict:
     return fields
 
 
-def upsert(notion, database_id: str, day: date, command: str, properties: dict) -> str:
+def rich_chunks(text: str) -> list[dict]:
+    body = text.strip() or " "
+    return [
+        {"type": "text", "text": {"content": body[i : i + 1900]}}
+        for i in range(0, len(body), 1900)
+    ]
+
+
+def block(kind: str, text: str) -> dict:
+    return {"object": "block", "type": kind, kind: {"rich_text": rich_chunks(text)}}
+
+
+def blocks_from_draft(text: str) -> list[dict]:
+    """把纯文本收成 Notion 块。## 开头是小标题，- 开头是列表，空行分段。"""
+    blocks: list[dict] = []
+    paragraph: list[str] = []
+
+    def flush() -> None:
+        if paragraph:
+            blocks.append(block("paragraph", " ".join(paragraph)))
+            paragraph.clear()
+
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            flush()
+            continue
+        if line.startswith("##"):
+            flush()
+            blocks.append(block("heading_3", line.lstrip("#").strip()))
+            continue
+        if line.startswith("- "):
+            flush()
+            blocks.append(block("bulleted_list_item", line[2:].strip()))
+            continue
+        paragraph.append(line)
+    flush()
+    return blocks
+
+
+def has_draft_heading(notion, page_id: str) -> bool:
+    cursor = None
+    while True:
+        response = notion.blocks.children.list(block_id=page_id, start_cursor=cursor)
+        for item in response.get("results") or []:
+            rich = (item.get(item.get("type", "")) or {}).get("rich_text") or []
+            label = "".join(piece.get("plain_text", "") for piece in rich)
+            if label.strip() == "AI稿":
+                return True
+        if not response.get("has_more"):
+            return False
+        cursor = response.get("next_cursor")
+
+
+def append_draft(notion, page_id: str, draft: str) -> None:
+    """正文末尾追加一节。已有「AI稿」标题就不再加标题。"""
+    children = []
+    if not has_draft_heading(notion, page_id):
+        children.append(block("heading_2", "AI稿"))
+    children.extend(blocks_from_draft(draft))
+    if children:
+        notion.blocks.children.append(block_id=page_id, children=children)
+
+
+def upsert(notion, database_id: str, day: date, command: str, properties: dict, draft: str | None) -> str:
     page_id = find_log(notion, database_id, day, NODES[command])
     if page_id:
         # 重跑只刷新客观列，手填列不在 properties 里。
         notion.pages.update(page_id=page_id, properties=properties)
-        return page_id
-    parent = {"database_id": database_id}
-    if not hasattr(notion.databases, "query"):
-        parent = {"data_source_id": data_source_id(notion, database_id)}
-    created = notion.pages.create(parent=parent, properties=properties)
-    return created["id"]
+    else:
+        parent = {"database_id": database_id}
+        if not hasattr(notion.databases, "query"):
+            parent = {"data_source_id": data_source_id(notion, database_id)}
+        created = notion.pages.create(parent=parent, properties=properties)
+        page_id = created["id"]
+    if draft:
+        append_draft(notion, page_id, draft)
+    return page_id
 
 
 def build_watch_map(rows: list[dict]) -> dict[str, str]:
     return {row["code"]: row["name"] for row in rows if row["code"]}
 
 
-def run(command: str, dry_run: bool, day: date | None = None) -> None:
+def run(command: str, dry_run: bool, day: date | None = None, draft: str | None = None) -> None:
     today = day or today_sh()
     load_env()
     watch: dict[str, str] = {}
@@ -352,7 +421,7 @@ def run(command: str, dry_run: bool, day: date | None = None) -> None:
         notion = notion_client()
     if not log_id:
         sys.exit("缺少 NOTION_LOG_DB_ID。")
-    page_id = upsert(notion, log_id, today, command, properties)
+    page_id = upsert(notion, log_id, today, command, properties, draft)
     print(f"已写入 {page_id}")
 
 
@@ -382,6 +451,8 @@ def self_check() -> None:
     assert clip("") == PENDING
     assert code6("300853 申昊科技") == "300853"
     assert code6("300853.SZ") == "300853"
+    drafted = blocks_from_draft("## 判断\n冲高回落。\n\n- LED 指数收绿")
+    assert [item["type"] for item in drafted] == ["heading_3", "paragraph", "bulleted_list_item"]
     print("self-check ok")
 
 
@@ -390,13 +461,15 @@ def main() -> None:
     parser.add_argument("command", choices=["preopen", "midday", "close", "week", "self-check"])
     parser.add_argument("--date", help="用哪一天的行情，格式 YYYY-MM-DD，默认今天（上海）")
     parser.add_argument("--dry-run", action="store_true", help="只打印将写入的客观字段")
+    parser.add_argument("--draft", help="追加到页面正文「AI稿」的 markdown 文件，不进属性")
     args = parser.parse_args()
     if args.command == "self-check":
         self_check()
         return
     day = date.fromisoformat(args.date) if args.date else None
+    draft = Path(args.draft).read_text(encoding="utf-8") if args.draft else None
     try:
-        run(args.command, args.dry_run, day)
+        run(args.command, args.dry_run, day, draft)
     except Exception as exc:  # 写入 Notion 失败要看得见；行情失败已在各自函数里吞掉
         print(f"写入失败：{exc}", file=sys.stderr)
         sys.exit(1)
