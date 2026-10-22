@@ -203,11 +203,26 @@ def db_id(name: str) -> str:
     return value
 
 
+def data_source_id(notion, database_id: str) -> str:
+    """新版 SDK 用 data source 查询。库还没分享给集成时，这里会直接报找不到库。"""
+    cache = getattr(notion, "_ds_cache", None)
+    if cache is None:
+        cache = {}
+        notion._ds_cache = cache
+    if database_id in cache:
+        return cache[database_id]
+    meta = notion.databases.retrieve(database_id=database_id)
+    sources = meta.get("data_sources") or []
+    found = sources[0]["id"] if sources else database_id
+    cache[database_id] = found
+    return found
+
+
 def query_database(notion, database_id: str, **body):
     databases = getattr(notion, "databases", None)
     if databases is not None and hasattr(databases, "query"):
         return databases.query(database_id=database_id, **body)
-    return notion.request(path=f"databases/{database_id}/query", method="POST", body=body)
+    return notion.data_sources.query(data_source_id=data_source_id(notion, database_id), **body)
 
 
 def find_log(notion, database_id: str, day: date, node: str) -> str | None:
@@ -286,7 +301,10 @@ def upsert(notion, database_id: str, day: date, command: str, properties: dict) 
         # 重跑只刷新客观列，手填列不在 properties 里。
         notion.pages.update(page_id=page_id, properties=properties)
         return page_id
-    created = notion.pages.create(parent={"database_id": database_id}, properties=properties)
+    parent = {"database_id": database_id}
+    if not hasattr(notion.databases, "query"):
+        parent = {"data_source_id": data_source_id(notion, database_id)}
+    created = notion.pages.create(parent=parent, properties=properties)
     return created["id"]
 
 
@@ -294,8 +312,8 @@ def build_watch_map(rows: list[dict]) -> dict[str, str]:
     return {row["code"]: row["name"] for row in rows if row["code"]}
 
 
-def run(command: str, dry_run: bool) -> None:
-    today = today_sh()
+def run(command: str, dry_run: bool, day: date | None = None) -> None:
+    today = day or today_sh()
     load_env()
     watch: dict[str, str] = {}
     notion = None
@@ -370,13 +388,15 @@ def self_check() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="写入一条看盘日志，客观字段自动填，主观字段留空。")
     parser.add_argument("command", choices=["preopen", "midday", "close", "week", "self-check"])
+    parser.add_argument("--date", help="用哪一天的行情，格式 YYYY-MM-DD，默认今天（上海）")
     parser.add_argument("--dry-run", action="store_true", help="只打印将写入的客观字段")
     args = parser.parse_args()
     if args.command == "self-check":
         self_check()
         return
+    day = date.fromisoformat(args.date) if args.date else None
     try:
-        run(args.command, args.dry_run)
+        run(args.command, args.dry_run, day)
     except Exception as exc:  # 写入 Notion 失败要看得见；行情失败已在各自函数里吞掉
         print(f"写入失败：{exc}", file=sys.stderr)
         sys.exit(1)
