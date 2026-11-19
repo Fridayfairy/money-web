@@ -1,9 +1,25 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# 个人投资助手
 
-# This is NOT the Next.js you know
+这个仓库给 Cursor 云端和本地用。它不是网站，没有构建，没有部署。
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+使用者是 A 股短线炒作投机者，本金 30 万，目标 50 万。助手的重点是三件事：炒作线的锚点关系图、市场和板块各自的周期、事件传导。画像和已犯过的错在 `knowledge/habits.md`。数据和事件怎么标事实、推断、猜测，见 `.cursor/rules/evidence-labels.mdc`。
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+每日盘面写进 Notion 看盘日志，不写进 git。随笔和流派也在 Notion，不在这个仓库。技能和风格改了再提交。
 
-<!-- END:nextjs-agent-rules -->
+## 先读什么
+
+要不要做、早盘、盘中：读 `.cursor/skills/a-share-open/SKILL.md`。五个阶段的定义在技能里，开头先核对昨天的判断。Notion 随笔「流派」不改预警。
+
+收盘复盘、谁是龙头谁是跟风、画线图谱：读 `.cursor/skills/a-share-review/SKILL.md`。
+
+分析一条消息、政策、外围、传闻或个股新闻：读 `.cursor/skills/a-share-event/SKILL.md`。
+
+写到席位：再读 `.cursor/skills/a-share-dragon-tiger/SKILL.md`。
+
+风格始终听 `.cursor/rules/bold-judgment-style.mdc`。
+
+接口和笔记字段在 `knowledge/interfaces.md`。使用习惯在 `knowledge/habits.md`。文件地图在 `knowledge/README.md`。
+
+## 不做的事
+
+不恢复 Next.js，不把推送当成发布。行情不从本仓库里现算，向问财要。
